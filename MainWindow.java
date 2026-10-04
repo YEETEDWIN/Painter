@@ -1,13 +1,14 @@
-import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-
+import javax.swing.JPanel;
 
 public class MainWindow {
 
@@ -19,18 +20,18 @@ public class MainWindow {
 	public MainWindow() {
 		window = new JFrame();
 		window.setTitle("Painter");
-		window.setSize(800, 600);
+		window.setSize(1000, 600);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setLocationRelativeTo(null);
 		window.setLayout(new BorderLayout());
-		// create and add UI components
+
 		button = createButton();
 		panel = createPanel();
 		label = createLabel();
 
-		window.add(panel, BorderLayout.NORTH);
 		panel.add(label);
 		panel.add(button);
+		window.add(panel, BorderLayout.CENTER);
 	}
 
 	public void show() {
@@ -39,19 +40,22 @@ public class MainWindow {
 
 	private JButton createButton() {
 		JButton button = new JButton();
-		button.setSize(10, 50);
+		button.setPreferredSize(new Dimension(100, 30));
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		return button;
 	}
 
 	private JPanel createPanel() {
 		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		panel.setBackground(Color.GRAY);
 		return panel;
 	}
 
 	private JLabel createLabel() {
-		JLabel label = new JLabel();
+		JLabel label = new JLabel("Welcome to the Painter Application!");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		return label;
 	}
 }
