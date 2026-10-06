@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -10,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JFrame;
-import javax.swing.*;
+
 
 public class MainWindow {
 
@@ -70,6 +67,8 @@ public class MainWindow {
 		DrawingCanvas() {
 			setBackground(Color.WHITE);
 			setPreferredSize(new Dimension(1000, 500));
+			addMouseListener(this);
+			addMouseMotionListener(this);
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -82,7 +81,15 @@ public class MainWindow {
 		public void mouseDragged(MouseEvent e) {
 			int[] x;
 			int[] y;
-			for
+			for(int i = 0; i < 3; i++){
+				x = new int[3];
+				y = new int[3];
+				x[i] = e.getX();
+				y[i] = e.getY();
+				Graphics g = getGraphics();
+				g.setColor(Color.BLACK);
+				g.fillOval(x[i] , y[i] , 10, 10);
+			}
 
 		}
 		public void mousePressed(MouseEvent e) {}
