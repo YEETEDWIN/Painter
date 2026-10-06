@@ -1,9 +1,0 @@
-#!/bin/sh
-set -eu
-
-ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-BUILD_DIR=$(mktemp -d)
-trap 'rm -rf "$BUILD_DIR"' EXIT
-
-javac -d "$BUILD_DIR" "$ROOT/Launch.java" "$ROOT/MainWindow.java"
-java -cp "$BUILD_DIR" Launch
