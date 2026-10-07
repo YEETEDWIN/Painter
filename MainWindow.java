@@ -75,7 +75,7 @@ public class MainWindow {
 			int y = e.getY();
 			Graphics g = getGraphics();
 			g.setColor(Color.BLACK);
-			g.fillRect(x, y, 6,6);
+			g.fillRect(x, y, 6, 6);
 		}
 
 		int[] x = new int[100];
@@ -108,6 +108,9 @@ public class MainWindow {
 		}
 
 		public void mouseExited(MouseEvent e) {
+		}
+
+		public void mouseMoved(MouseEvent e) {
 		}
 	}
 }
