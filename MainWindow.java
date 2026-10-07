@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -10,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JFrame;
-import javax.swing.*;
 
 public class MainWindow {
 
@@ -70,6 +66,8 @@ public class MainWindow {
 		DrawingCanvas() {
 			setBackground(Color.WHITE);
 			setPreferredSize(new Dimension(1000, 500));
+			addMouseListener(this);
+			addMouseMotionListener(this);
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -77,17 +75,39 @@ public class MainWindow {
 			int y = e.getY();
 			Graphics g = getGraphics();
 			g.setColor(Color.BLACK);
-			g.fillOval(x , y , 10, 10);
+			g.fillRect(x, y, 6,6);
 		}
+
+		int[] x = new int[100];
+		int[] y = new int[100];
+		int pointCount = 0;
+
 		public void mouseDragged(MouseEvent e) {
-			int[] x;
-			int[] y;
-			for
+			if (pointCount == x.length) {
+				x = java.util.Arrays.copyOf(x, pointCount * 2);
+				y = java.util.Arrays.copyOf(y, pointCount * 2);
+			}
+			x[pointCount] = e.getX();
+			y[pointCount] = e.getY();
+			pointCount++;
+			Graphics g = getGraphics();
+			g.setColor(Color.BLACK);
+			((Graphics2D) g).setStroke(new BasicStroke(6));
+			g.drawPolyline(x, y, pointCount);
 
 		}
-		public void mousePressed(MouseEvent e) {}
-		public void mouseReleased(MouseEvent e) {}
-		public void mouseEntered(MouseEvent e) {}
-		public void mouseExited(MouseEvent e) {}
+
+		public void mousePressed(MouseEvent e) {
+			pointCount = 0;
+		}
+
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 }
