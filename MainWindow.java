@@ -1,12 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 public class MainWindow {
 
@@ -32,10 +32,25 @@ public class MainWindow {
 		panel.add(label);
 		panel.add(button);
 		window.add(new DrawingCanvas(), BorderLayout.CENTER);
+
+		Toolbar toolbar = new Toolbar();
+		JLayeredPane toolbarOverlay = window.getLayeredPane();
+		toolbarOverlay.add(toolbar, JLayeredPane.PALETTE_LAYER);
+		toolbarOverlay.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent event) {
+				layoutToolbar(toolbarOverlay, toolbar);
+			}
+		});
+		layoutToolbar(toolbarOverlay, toolbar);
 	}
 
 	public void show() {
 		window.setVisible(true);
+	}
+
+	private void layoutToolbar(JLayeredPane toolbarOverlay, Toolbar toolbar) {
+		toolbar.setBounds((toolbarOverlay.getWidth() - toolbar.getToolbarWidth()) / 2,10, toolbar.getToolbarWidth(), toolbar.getToolbarHeight());
 	}
 
 	private JButton createButton() {
