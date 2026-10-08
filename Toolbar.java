@@ -1,14 +1,20 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.swing.JToggleButton;
 import javax.swing.JComponent;
 
 public class Toolbar extends JComponent {
 	private static final int TOOLBAR_WIDTH = 300;
 	private static final int TOOLBAR_HEIGHT = 40;
 
-	public Toolbar() {
+	public Toolbar(DrawFreelyTool drawTool) {
 		setOpaque(false);
+		
+		JToggleButton drawButton = new JToggleButton("Draw", true);
+		drawButton.setBounds(10, 5, 80, 30);
+		drawButton.addActionListener(event -> drawTool.setDrawingEnabled(drawButton.isSelected()));
+		add(drawButton);
 	}
 
 	public int getToolbarWidth() {
