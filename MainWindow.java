@@ -4,9 +4,10 @@ import java.awt.event.*;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 public class MainWindow {
 
@@ -23,7 +24,6 @@ public class MainWindow {
 		window.setLocationRelativeTo(null);
 		window.setLayout(new BorderLayout());
 		window.getContentPane().setBackground(Color.BLACK);
-		// create and add UI components
 		button = createButton();
 		panel = createPanel();
 		label = createLabel();
@@ -31,11 +31,30 @@ public class MainWindow {
 		window.add(panel, BorderLayout.NORTH);
 		panel.add(label);
 		panel.add(button);
-		window.add(new DrawingCanvas(), BorderLayout.CENTER);
+		JPanel canvas = new JPanel();
+		canvas.setBackground(Color.WHITE);
+		canvas.setPreferredSize(new Dimension(1000, 500));
+		DrawFreelyTool drawTool = new DrawFreelyTool(canvas);
+		window.add(canvas, BorderLayout.CENTER);
+
+		Toolbar toolbar = new Toolbar(drawTool);
+		JLayeredPane toolbarOverlay = window.getLayeredPane();
+		toolbarOverlay.add(toolbar, JLayeredPane.PALETTE_LAYER);
+		toolbarOverlay.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent event) {
+				layoutToolbar(toolbarOverlay, toolbar);
+			}
+		});
+		layoutToolbar(toolbarOverlay, toolbar);
 	}
 
 	public void show() {
 		window.setVisible(true);
+	}
+
+	private void layoutToolbar(JLayeredPane toolbarOverlay, Toolbar toolbar) {
+		toolbar.setBounds((toolbarOverlay.getWidth() - toolbar.getToolbarWidth()) / 2,10, toolbar.getToolbarWidth(), toolbar.getToolbarHeight());
 	}
 
 	private JButton createButton() {
@@ -60,57 +79,5 @@ public class MainWindow {
 		label.setText("Welcome to the Painter Application!");
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		return label;
-	}
-
-	class DrawingCanvas extends JPanel implements MouseListener, MouseMotionListener {
-		DrawingCanvas() {
-			setBackground(Color.WHITE);
-			setPreferredSize(new Dimension(1000, 500));
-			addMouseListener(this);
-			addMouseMotionListener(this);
-		}
-
-		public void mouseClicked(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
-			Graphics g = getGraphics();
-			g.setColor(Color.BLACK);
-			g.fillRect(x, y, 6, 6);
-		}
-
-		int[] x = new int[100];
-		int[] y = new int[100];
-		int pointCount = 0;
-
-		public void mouseDragged(MouseEvent e) {
-			if (pointCount == x.length) {
-				x = java.util.Arrays.copyOf(x, pointCount * 2);
-				y = java.util.Arrays.copyOf(y, pointCount * 2);
-			}
-			x[pointCount] = e.getX();
-			y[pointCount] = e.getY();
-			pointCount++;
-			Graphics g = getGraphics();
-			g.setColor(Color.BLACK);
-			((Graphics2D) g).setStroke(new BasicStroke(6));
-			g.drawPolyline(x, y, pointCount);
-
-		}
-
-		public void mousePressed(MouseEvent e) {
-			pointCount = 0;
-		}
-
-		public void mouseReleased(MouseEvent e) {
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		public void mouseExited(MouseEvent e) {
-		}
-
-		public void mouseMoved(MouseEvent e) {
-		}
 	}
 }
