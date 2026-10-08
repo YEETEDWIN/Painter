@@ -1,8 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-import javax.swing.JToggleButton;
 import javax.swing.JComponent;
+import javax.swing.JToggleButton;
 
 public class Toolbar extends JComponent {
 	private static final int TOOLBAR_WIDTH = 300;
@@ -11,7 +11,7 @@ public class Toolbar extends JComponent {
 	public Toolbar(DrawFreelyTool drawTool) {
 		setOpaque(false);
 		
-		JToggleButton drawButton = new JToggleButton("Draw", true);
+		JToggleButton drawButton = new JToggleButton("Draw", false);
 		drawButton.setBounds(10, 5, 80, 30);
 		drawButton.addActionListener(event -> drawTool.setDrawingEnabled(drawButton.isSelected()));
 		add(drawButton);
@@ -26,7 +26,7 @@ public class Toolbar extends JComponent {
 	}
 
     @Override
-    protected void paintComponent(Graphics graphics) {
+    public void paintComponent(Graphics graphics) {
         graphics.setColor(Color.BLACK);
         graphics.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
     }

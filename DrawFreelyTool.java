@@ -12,7 +12,7 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 	private int[] x = new int[100];
 	private int[] y = new int[100];
 	private int pointCount = 0;
-	private boolean drawingEnabled = true;
+	private boolean drawingEnabled = false;
 
 	public DrawFreelyTool(JPanel canvas) {
 		this.canvas = canvas;
