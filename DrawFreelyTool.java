@@ -13,6 +13,8 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 	private int[] y = new int[100];
 	private int pointCount = 0;
 	private boolean drawingEnabled = false;
+	private int newSize = 6;
+	private Color colour = Color.BLACK;
 
 	public DrawFreelyTool(JPanel canvas) {
 		this.canvas = canvas;
@@ -27,6 +29,14 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 		}
 	}
 
+	public void ChangeSize(int Size) {
+		this.newSize = Size;
+	}
+
+	public void SetColour(Color colour) {
+		this.colour = colour;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!drawingEnabled) {
@@ -34,8 +44,8 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 		}
 
 		Graphics g = canvas.getGraphics();
-		g.setColor(Color.BLACK);
-		g.fillRect(e.getX(), e.getY(), 6, 6);
+		g.setColor(colour);
+		g.fillRect(e.getX(), e.getY(), newSize, newSize);
 	}
 
 	@Override
@@ -53,8 +63,8 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 		pointCount++;
 
 		Graphics g = canvas.getGraphics();
-		g.setColor(Color.BLACK);
-		((Graphics2D) g).setStroke(new BasicStroke(6));
+		g.setColor(colour);
+		((Graphics2D) g).setStroke(new BasicStroke(newSize));
 		g.drawPolyline(x, y, pointCount);
 	}
 
