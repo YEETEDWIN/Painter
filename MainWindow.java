@@ -35,9 +35,10 @@ public class MainWindow {
 		canvas.setBackground(Color.WHITE);
 		canvas.setPreferredSize(new Dimension(1000, 500));
 		DrawFreelyTool drawTool = new DrawFreelyTool(canvas);
+		CommandHistory commandHistory = new CommandHistory();
 		window.add(canvas, BorderLayout.CENTER);
 
-		Toolbar toolbar = new Toolbar(drawTool);
+		Toolbar toolbar = new Toolbar(drawTool, commandHistory);
 		JLayeredPane toolbarOverlay = window.getLayeredPane();
 		toolbarOverlay.add(toolbar, JLayeredPane.PALETTE_LAYER);
 		toolbarOverlay.addComponentListener(new ComponentAdapter() {
