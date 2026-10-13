@@ -5,14 +5,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 
-interface Command {
-	void execute();
-
-	void undo();
-
-	String getDescription();
-}
-
 public final class CommandHistory {
 	private final Deque<Command> undoStack = new ArrayDeque<>();
 	private final Deque<Command> redoStack = new ArrayDeque<>();
