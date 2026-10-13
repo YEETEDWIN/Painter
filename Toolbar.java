@@ -1,69 +1,59 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 public class Toolbar extends JComponent {
-	private static final int TOOLBAR_WIDTH = 700;
-	private static final int TOOLBAR_HEIGHT = 80;
+	private static final int TOOLBAR_WIDTH = 900;
+	private static final int TOOLBAR_HEIGHT = 50;
 
 	public Toolbar(DrawFreelyTool drawTool, CommandHistory commandHistory) {
 		setOpaque(false);
 
 		JToggleButton drawButton = new JToggleButton("Draw", false);
-		drawButton.setBounds(10, 5, 80, 30);
+		drawButton.setBounds(10, 10, 80, 30);
 		drawButton.addActionListener(event -> drawTool.setDrawingEnabled(drawButton.isSelected()));
 		add(drawButton);
 
-		JButton undoButton = new JButton("Undo");
-		undoButton.setBounds(300, 5, 80, 30);
-		undoButton.addActionListener(event -> commandHistory.undo());
-		add(undoButton);
-
-		JButton redoButton = new JButton("Redo");
-		redoButton.setBounds(390, 5, 80, 30);
-		redoButton.addActionListener(event -> commandHistory.redo());
-		add(redoButton);
-
 		JTextField sizeField = new JTextField(5);
-		sizeField.setBounds(100, 5, 80, 30);
+		sizeField.setBounds(110, 10, 80, 30);
 		sizeField.setText("Size");
 		add(sizeField);
 
-		JToggleButton ChangeSizeButton = new JToggleButton("Change Size", false);
-		ChangeSizeButton.setBounds(200, 5, 80, 30);
+		JButton ChangeSizeButton = new JButton("Change Size");
+		ChangeSizeButton.setBounds(210, 10, 80, 30);
 		ChangeSizeButton.addActionListener(event -> {
 			int size = Integer.parseInt(sizeField.getText());
 			drawTool.ChangeSize(size);
 		});
 		add(ChangeSizeButton);
 
-		JTextField RedField = new JTextField(5);
-		RedField.setBounds(10, 45, 80, 30);
-		RedField.setText("Red (0-255)");
-		add(RedField);
-
-		JTextField GreenField = new JTextField(5);
-		GreenField.setBounds(100, 45, 80, 30);
-		GreenField.setText("Green (0-255)");
-		add(GreenField);
-
-		JTextField BlueField = new JTextField(5);
-		BlueField.setBounds(200, 45, 80, 30);
-		BlueField.setText("Blue (0-255)");
-		add(BlueField);
-
-		JToggleButton ChangeColourButton = new JToggleButton("Change Colour", false);
-		ChangeColourButton.setBounds(300, 45, 80, 30);
-		ChangeColourButton.addActionListener(event -> {
-			int red = Integer.parseInt(RedField.getText());
-			int green = Integer.parseInt(GreenField.getText());
-			int blue = Integer.parseInt(BlueField.getText());
-			drawTool.SetColour(new Color(red, green, blue));
+		JButton colorButton = new JButton("Colour");
+		colorButton.setBounds(300, 10, 80, 30);
+		colorButton.setBackground(drawTool.GetColour());
+		colorButton.setForeground(drawTool.GetColour());
+		colorButton.addActionListener(event -> {
+			Color chosenColor = JColorChooser.showDialog(this, "Choose a colour", drawTool.GetColour());
+			if (chosenColor != null) {
+				drawTool.SetColour(chosenColor);
+				colorButton.setBackground(chosenColor);
+				colorButton.setForeground(chosenColor);
+			}
 		});
-		add(ChangeColourButton);
+		add(colorButton);
+
+		JButton undoButton = new JButton("Undo");
+		undoButton.setBounds(390, 10, 80, 30);
+		undoButton.addActionListener(event -> commandHistory.undo());
+		add(undoButton);
+
+		JButton redoButton = new JButton("Redo");
+		redoButton.setBounds(480, 10, 80, 30);
+		redoButton.addActionListener(event -> commandHistory.redo());
+		add(redoButton);
 	}
 
 	public int getToolbarWidth() {

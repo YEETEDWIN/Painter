@@ -37,6 +37,10 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 		this.colour = colour;
 	}
 
+	public Color GetColour() {
+		return this.colour;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (!drawingEnabled) {
