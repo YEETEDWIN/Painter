@@ -1,31 +1,49 @@
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import javax.swing.JPanel;
+
 
 public class DrawFreelyTool implements MouseListener, MouseMotionListener {
-	private final JPanel canvas;
 	private int[] x = new int[100];
 	private int[] y = new int[100];
 	private int pointCount = 0;
 	private boolean drawingEnabled = false;
 	private int newSize = 6;
 	private Color colour = Color.BLACK;
+	private final DrawingCanvas canvas;
+	private final CommandHistory commandHistory;
+	private Color strokeColour;
+	private int strokeSize;
 
-	public DrawFreelyTool(JPanel canvas) {
+	public DrawFreelyTool(DrawingCanvas canvas, CommandHistory commandHistory) {
 		this.canvas = canvas;
+		this.commandHistory = commandHistory;
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
+	}
+
+	private void addPoint(MouseEvent e) {
+		if (pointCount == x.length) {
+			x = java.util.Arrays.copyOf(x, pointCount * 2);
+			y = java.util.Arrays.copyOf(y, pointCount * 2);
+		}
+		x[pointCount] = e.getX();
+		y[pointCount] = e.getY();
+		pointCount++;
+	}
+
+	private void updatePreview() {
+		if (pointCount > 0) {
+			canvas.setPreviewStroke(new Stroke(x, y, pointCount, strokeColour, strokeSize));
+		}
 	}
 
 	public void setDrawingEnabled(boolean drawingEnabled) {
 		this.drawingEnabled = drawingEnabled;
 		if (!drawingEnabled) {
 			pointCount = 0;
+			canvas.setPreviewStroke(null);
 		}
 	}
 
@@ -42,45 +60,46 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (!drawingEnabled) {
-			return;
-		}
-
-		Graphics g = canvas.getGraphics();
-		g.setColor(colour);
-		g.fillRect(e.getX(), e.getY(), newSize, newSize);
+	public void mouseClicked(MouseEvent e) {	
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (!drawingEnabled) {
-			return;
+		if (drawingEnabled && pointCount > 0) {
+			addPoint(e);
+			updatePreview();
 		}
 
-		if (pointCount == x.length) {
-			x = java.util.Arrays.copyOf(x, pointCount * 2);
-			y = java.util.Arrays.copyOf(y, pointCount * 2);
-		}
-		x[pointCount] = e.getX();
-		y[pointCount] = e.getY();
-		pointCount++;
-
-		Graphics g = canvas.getGraphics();
-		g.setColor(colour);
-		((Graphics2D) g).setStroke(new BasicStroke(newSize));
-		g.drawPolyline(x, y, pointCount);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (drawingEnabled) {
-			pointCount = 0;
+		if (!drawingEnabled) {
+			return;
 		}
+
+		pointCount = 0;
+		strokeColour = colour;
+		strokeSize = newSize;
+		addPoint(e);
+		updatePreview();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (!drawingEnabled || pointCount == 0) {
+			return;
+		}
+
+		if (x[pointCount - 1] != e.getX() || y[pointCount - 1] != e.getY()) {
+			addPoint(e);
+			updatePreview();
+		}
+
+		Stroke stroke = new Stroke(x, y, pointCount, strokeColour, strokeSize);
+		commandHistory.execute(new DrawStrokeCommand(canvas, stroke));
+		canvas.setPreviewStroke(null);
+		pointCount = 0;
 	}
 
 	@Override

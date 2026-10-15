@@ -33,13 +33,11 @@ public class Toolbar extends JComponent {
 
 		JButton colorButton = new JButton("Colour");
 		colorButton.setBounds(300, 10, 80, 30);
-		colorButton.setBackground(drawTool.GetColour());
 		colorButton.setForeground(drawTool.GetColour());
 		colorButton.addActionListener(event -> {
 			Color chosenColor = JColorChooser.showDialog(this, "Choose a colour", drawTool.GetColour());
 			if (chosenColor != null) {
 				drawTool.SetColour(chosenColor);
-				colorButton.setBackground(chosenColor);
 				colorButton.setForeground(chosenColor);
 			}
 		});
