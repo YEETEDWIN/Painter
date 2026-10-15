@@ -31,11 +31,11 @@ public class MainWindow {
 		window.add(panel, BorderLayout.NORTH);
 		panel.add(label);
 		panel.add(button);
-		JPanel canvas = new JPanel();
+		DrawingCanvas canvas = new DrawingCanvas();
 		canvas.setBackground(Color.WHITE);
 		canvas.setPreferredSize(new Dimension(1000, 500));
-		DrawFreelyTool drawTool = new DrawFreelyTool(canvas);
 		CommandHistory commandHistory = new CommandHistory();
+		DrawFreelyTool drawTool = new DrawFreelyTool(canvas, commandHistory);
 		window.add(canvas, BorderLayout.CENTER);
 
 		Toolbar toolbar = new Toolbar(drawTool, commandHistory);
