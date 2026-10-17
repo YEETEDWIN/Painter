@@ -3,18 +3,22 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-
 public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 	private int[] x = new int[100];
 	private int[] y = new int[100];
 	private int pointCount = 0;
 	private boolean drawingEnabled = false;
+	private boolean eraseEnabled = false;
 	private int newSize = 6;
 	private Color colour = Color.BLACK;
 	private final DrawingCanvas canvas;
 	private final CommandHistory commandHistory;
 	private Color strokeColour;
 	private int strokeSize;
+
+	public boolean isEraseEnabled() {
+		return eraseEnabled;
+	}
 
 	public DrawFreelyTool(DrawingCanvas canvas, CommandHistory commandHistory) {
 		this.canvas = canvas;
@@ -47,6 +51,14 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 		}
 	}
 
+	public void setEraseEnabled(boolean eraseEnabled) {
+		this.eraseEnabled = eraseEnabled;
+		if (!eraseEnabled) {
+			pointCount = 0;
+			canvas.setPreviewStroke(null);
+		}
+	}
+
 	public void ChangeSize(int Size) {
 		this.newSize = Size;
 	}
@@ -60,12 +72,12 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {	
+	public void mouseClicked(MouseEvent e) {
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (drawingEnabled && pointCount > 0) {
+		if ((drawingEnabled || eraseEnabled) && pointCount > 0) {
 			addPoint(e);
 			updatePreview();
 		}
@@ -74,7 +86,7 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (!drawingEnabled) {
+		if (!drawingEnabled && !eraseEnabled) {
 			return;
 		}
 
@@ -87,7 +99,7 @@ public class DrawFreelyTool implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (!drawingEnabled || pointCount == 0) {
+		if (!drawingEnabled && !eraseEnabled || pointCount == 0) {
 			return;
 		}
 
