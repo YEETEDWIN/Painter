@@ -9,6 +9,7 @@ import javax.swing.JToggleButton;
 public class Toolbar extends JComponent {
 	private static final int TOOLBAR_WIDTH = 900;
 	private static final int TOOLBAR_HEIGHT = 50;
+	private static final Color ACTIVE_BUTTON_TEXT_COLOR = new Color(46, 125, 50);
 
 
 	public Toolbar(DrawFreelyTool drawTool, CommandHistory commandHistory) {
@@ -53,24 +54,38 @@ public class Toolbar extends JComponent {
 
 		JToggleButton eraseButton = new JToggleButton("Erase", false);
 		eraseButton.setBounds(100, 10, 80, 30);
+		Color eraseTextColor = eraseButton.getForeground();
+		JToggleButton drawButton = new JToggleButton("Draw", false);
+		drawButton.setBounds(10, 10, 80, 30);
+		Color drawTextColor = drawButton.getForeground();
+
 		eraseButton.addActionListener(event -> {
-			if (eraseButton.isSelected()) {
-				drawTool.setEraseEnabled(true);
+			boolean enabled = eraseButton.isSelected();
+			eraseButton.setForeground(enabled ? ACTIVE_BUTTON_TEXT_COLOR : eraseTextColor);
+			if (enabled) {
+				drawButton.setSelected(false);
+				drawButton.setForeground(drawTextColor);
+				drawTool.setDrawingEnabled(false);
+			}
+			drawTool.setEraseEnabled(enabled);
+			if (enabled) {
 				drawTool.SetColour(Color.WHITE);
 			} else {
-				drawTool.setEraseEnabled(false);
 				drawTool.SetColour(colorButton.getForeground());
 			}
 		});
 		add(eraseButton);
 
-		JToggleButton drawButton = new JToggleButton("Draw", false);
-		drawButton.setBounds(10, 10, 80, 30);
 		drawButton.addActionListener(event -> {
-			drawTool.setDrawingEnabled(drawButton.isSelected());
-			if (!drawTool.isEraseEnabled()) {
-				drawTool.SetColour(colorButton.getForeground());
+			boolean enabled = drawButton.isSelected();
+			drawButton.setForeground(enabled ? ACTIVE_BUTTON_TEXT_COLOR : drawTextColor);
+			if (enabled) {
+				eraseButton.setSelected(false);
+				eraseButton.setForeground(eraseTextColor);
+				drawTool.setEraseEnabled(false);
 			}
+			drawTool.setDrawingEnabled(enabled);
+			drawTool.SetColour(colorButton.getForeground());
 		});
 		add(drawButton);
 	}
