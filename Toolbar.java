@@ -11,7 +11,7 @@ public class Toolbar extends JComponent {
 	private static final int TOOLBAR_HEIGHT = 50;
 
 
-	public Toolbar(DrawFreelyTool drawTool, CommandHistory commandHistory) {
+	public Toolbar(DrawingTool drawTool, CommandHistory commandHistory) {
 		setOpaque(false);
 
 		JTextField sizeField = new JTextField(5);

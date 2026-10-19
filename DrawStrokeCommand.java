@@ -16,9 +16,4 @@ public class DrawStrokeCommand implements Command {
     public void undo() {
         canvas.removeStroke(stroke);
     }
-
-    @Override
-    public String getDescription() {
-        return "Draw Stroke";
-    }
 }
