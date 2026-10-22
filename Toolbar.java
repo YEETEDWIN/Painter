@@ -12,7 +12,7 @@ public class Toolbar extends JComponent {
 	private static final Color ACTIVE_BUTTON_TEXT_COLOR = new Color(46, 125, 50);
 
 
-	public Toolbar(DrawFreelyTool drawTool, CommandHistory commandHistory) {
+	public Toolbar(DrawingTool drawTool, CommandHistory commandHistory) {
 		setOpaque(false);
 
 		JTextField sizeField = new JTextField(5);

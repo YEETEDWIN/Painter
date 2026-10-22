@@ -1,5 +1,5 @@
-import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Stroke {
@@ -24,18 +24,17 @@ public class Stroke {
 
         java.awt.Stroke originalStroke = g.getStroke();
         java.awt.Color originalColor = g.getColor();
-        java.awt.Graphics2D g2d = g;
 
-        g2d.setColor(colour);
-        g2d.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g.setColor(colour);
+        g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (pointCount == 1) {
-            g2d.drawLine(x[0], y[0], x[0], y[0]);
+            g.drawLine(x[0], y[0], x[0], y[0]);
         } else {
             for (int i = 1; i < pointCount; i++) {
-                g2d.drawLine(x[i - 1], y[i - 1], x[i], y[i]);
+                g.drawLine(x[i - 1], y[i - 1], x[i], y[i]);
             }
         }
-        g2d.setStroke(originalStroke);
-        g2d.setColor(originalColor);
+        g.setStroke(originalStroke);
+        g.setColor(originalColor);
     }
 }
