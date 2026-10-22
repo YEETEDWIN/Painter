@@ -12,7 +12,7 @@ public class Toolbar extends JComponent {
 	private static final Color ACTIVE_BUTTON_TEXT_COLOR = new Color(46, 125, 50);
 
 
-	public Toolbar(DrawingTool drawTool, CommandHistory commandHistory) {
+	public Toolbar(DrawingTool drawTool, CommandHistory commandHistory, DrawingCanvas canvas) {
 		setOpaque(false);
 
 		JTextField sizeField = new JTextField(5);
@@ -51,6 +51,13 @@ public class Toolbar extends JComponent {
 		redoButton.setBounds(550, 10, 80, 30);
 		redoButton.addActionListener(event -> commandHistory.redo());
 		add(redoButton);
+
+		JButton clearButton = new JButton("Clear");
+		clearButton.setBounds(640, 10, 80, 30);
+		clearButton.addActionListener(event -> {
+			commandHistory.execute(new ClearCanvasCommand(canvas));
+		});
+		add(clearButton);
 
 		JToggleButton eraseButton = new JToggleButton("Erase", false);
 		eraseButton.setBounds(100, 10, 80, 30);
