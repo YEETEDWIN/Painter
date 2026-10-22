@@ -27,7 +27,7 @@ public class MainWindow {
 		DrawingTool drawTool = new DrawingTool(canvas, commandHistory);
 		window.add(canvas, BorderLayout.CENTER);
 
-		toolbar = new Toolbar(drawTool, commandHistory);
+		toolbar = new Toolbar(drawTool, commandHistory, canvas);
 		toolbarOverlay = window.getLayeredPane();
 		toolbarOverlay.add(toolbar, JLayeredPane.PALETTE_LAYER);
 		toolbarOverlay.addComponentListener(new ComponentAdapter() {
