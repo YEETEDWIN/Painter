@@ -36,5 +36,5 @@ public class Stroke {
         }
         g.setStroke(originalStroke);
         g.setColor(originalColor);
-    }
+    } // draws a line
 }

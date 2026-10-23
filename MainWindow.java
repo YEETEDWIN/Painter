@@ -37,7 +37,7 @@ public class MainWindow {
 			}
 		});
 		layoutToolbar(toolbarOverlay, toolbar);
-	}
+	} // makes a mainwindow and adds a toolbar
 
 	public void show() {
 		window.setVisible(true);

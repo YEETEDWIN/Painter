@@ -42,7 +42,8 @@ public class DrawingCanvas extends JPanel {
     }
 
     boolean isStrokeAt(int x, int y) {
-        return strokeLayer != null && x >= 0 && x < strokeLayer.getWidth() && y >= 0 && y < strokeLayer.getHeight() && ((strokeLayer.getRGB(x, y) >>> 24) & 0xff) > 0;
+        return strokeLayer != null && x >= 0 && x < strokeLayer.getWidth() && y >= 0 && y < strokeLayer.getHeight()
+                && ((strokeLayer.getRGB(x, y) >>> 24) & 0xff) > 0;
     }
 
     public void applyFillToStrokeLayer(BufferedImage fillLayer) {

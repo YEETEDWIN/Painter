@@ -84,7 +84,7 @@ public final class Fill {
         }
         return expandedFill;
 
-    }
+    }// fills the connected area around the starting point and extends the area so it overlaps the lines
 
     private static boolean colorsMatch(int color, int targetcolor) {
         return Math.abs(((color >> 16) & 0xff) - ((targetcolor >> 16) & 0xff)) <= COLOR_TOLERANCE

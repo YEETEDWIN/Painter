@@ -131,7 +131,7 @@ public void mouseDragged(MouseEvent e) {
         addPoint(e);
         updatePreview();
     }
-}
+} //updates the preview or erases in the path of the cursor
 
 @Override
 public void mousePressed(MouseEvent e) {
@@ -168,7 +168,7 @@ public void mousePressed(MouseEvent e) {
     strokeSize = brushSize;
     addPoint(e);
     updatePreview();
-}
+}// starts an action, fills the canvas, or begins a shape, drawing or erasing
 
 @Override
 public void mouseReleased(MouseEvent e) {
@@ -258,5 +258,5 @@ public void mouseReleased(MouseEvent e) {
 			default:
 				return null;
 		}
-	}
+	} // finishes an shape, drawing or erasing and adds it into the command history
 }
