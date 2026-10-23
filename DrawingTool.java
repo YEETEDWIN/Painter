@@ -1,8 +1,8 @@
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.awt.event.MouseEvent;
 
 public class DrawingTool extends MouseAdapter {
 	public enum ShapeType {
@@ -11,8 +11,8 @@ public class DrawingTool extends MouseAdapter {
 		ELLIPSE
 	}
 
-	private int[] x = new int[100];
-	private int[] y = new int[100];
+	private int[] strokeX = new int[100];
+	private int[] strokeY = new int[100];
 	private int pointCount = 0;
 	private boolean drawingEnabled = false;
 	private boolean eraseEnabled = false;
@@ -21,8 +21,8 @@ public class DrawingTool extends MouseAdapter {
 	private boolean shapeInProgress;
 	private int shapeStartX;
 	private int shapeStartY;
-	private int newSize = 6;
-	private Color colour = Color.BLACK;
+	private int brushSize = 6;
+	private Color currentColour = Color.BLACK;
 	private final DrawingCanvas canvas;
 	private final CommandHistory commandHistory;
 	private Color strokeColour;
@@ -42,18 +42,18 @@ public class DrawingTool extends MouseAdapter {
 	}
 
 	private void addPoint(MouseEvent e) {
-		if (pointCount == x.length) {
-			x = java.util.Arrays.copyOf(x, pointCount * 2);
-			y = java.util.Arrays.copyOf(y, pointCount * 2);
+		if (pointCount == strokeX.length) {
+			strokeX = java.util.Arrays.copyOf(strokeX, pointCount * 2);
+			strokeY = java.util.Arrays.copyOf(strokeY, pointCount * 2);
 		}
-		x[pointCount] = e.getX();
-		y[pointCount] = e.getY();
+		strokeX[pointCount] = e.getX();
+		strokeY[pointCount] = e.getY();
 		pointCount++;
 	}
 
 	private void updatePreview() {
 		if (pointCount > 0) {
-			canvas.setPreviewStroke(new Stroke(x, y, pointCount, strokeColour, strokeSize));
+			canvas.setPreviewStroke(new Stroke(strokeX, strokeY, pointCount, strokeColour, strokeSize));
 		}
 	}
 
@@ -100,16 +100,20 @@ public class DrawingTool extends MouseAdapter {
 		canvas.setPreviewStroke(null);
 	}
 
-	public void ChangeSize(int Size) {
-		this.newSize = Math.max(2, Size + 1);
+	public void changeSize(int size) {
+		this.brushSize = Math.max(2, size + 1);
+	}
+
+	public int getBrushSize() {
+		return brushSize;
 	}
 
 	public void SetColour(Color colour) {
-		this.colour = colour;
+		this.currentColour = colour;
 	}
 
 	public Color GetColour() {
-		return this.colour;
+		return this.currentColour;
 	}
 
 @Override
@@ -121,7 +125,7 @@ public void mouseDragged(MouseEvent e) {
 
     if (eraseEnabled && pointCount > 0) {
         int last = pointCount - 1;
-        canvas.eraseLine(x[last], y[last], e.getX(), e.getY(), newSize);
+        canvas.eraseLine(strokeX[last], strokeY[last], e.getX(), e.getY(), brushSize);
         addPoint(e);
     } else if (drawingEnabled && pointCount > 0) {
         addPoint(e);
@@ -132,8 +136,7 @@ public void mouseDragged(MouseEvent e) {
 @Override
 public void mousePressed(MouseEvent e) {
     if (fillEnabled) {
-        commandHistory.execute(
-                new FillCommand(canvas, e.getX(), e.getY(), colour));
+        commandHistory.execute(new FillCommand(canvas, e.getX(), e.getY(), currentColour));
         return;
     }
 
@@ -141,8 +144,8 @@ public void mousePressed(MouseEvent e) {
         shapeStartX = e.getX();
         shapeStartY = e.getY();
         shapeInProgress = true;
-        strokeColour = colour;
-        strokeSize = newSize;
+        strokeColour = currentColour;
+        strokeSize = brushSize;
         updateShapePreview(e.getX(), e.getY());
         return;
     }
@@ -157,12 +160,12 @@ public void mousePressed(MouseEvent e) {
         eraseBefore = canvas.copyStrokeLayer();
         eraseFillBefore = canvas.copyFillLayers();
         addPoint(e);
-        canvas.eraseLine(e.getX(), e.getY(), e.getX(), e.getY(), newSize);
+        canvas.eraseLine(e.getX(), e.getY(), e.getX(), e.getY(), brushSize);
         return;
     }
 
-    strokeColour = colour;
-    strokeSize = newSize;
+    strokeColour = currentColour;
+    strokeSize = brushSize;
     addPoint(e);
     updatePreview();
 }
@@ -184,8 +187,8 @@ public void mouseReleased(MouseEvent e) {
     if (eraseEnabled) {
         if (pointCount > 0) {
             int last = pointCount - 1;
-            if (x[last] != e.getX() || y[last] != e.getY()) {
-                canvas.eraseLine(x[last], y[last], e.getX(), e.getY(), newSize);
+            if (strokeX[last] != e.getX() || strokeY[last] != e.getY()) {
+                canvas.eraseLine(strokeX[last], strokeY[last], e.getX(), e.getY(), brushSize);
             }
 
             BufferedImage eraseAfter = canvas.copyStrokeLayer();
@@ -204,12 +207,12 @@ public void mouseReleased(MouseEvent e) {
         return;
     }
 
-    if (x[pointCount - 1] != e.getX() || y[pointCount - 1] != e.getY()) {
+    if (strokeX[pointCount - 1] != e.getX() || strokeY[pointCount - 1] != e.getY()) {
         addPoint(e);
         updatePreview();
     }
 
-    Stroke stroke = new Stroke(x, y, pointCount, strokeColour, strokeSize);
+    Stroke stroke = new Stroke(strokeX, strokeY, pointCount, strokeColour, strokeSize);
     commandHistory.execute(new DrawStrokeCommand(canvas, stroke));
     canvas.setPreviewStroke(null);
     pointCount = 0;
