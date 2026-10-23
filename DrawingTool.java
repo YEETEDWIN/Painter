@@ -3,10 +3,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Objects;
 
 // Handles mouse input for drawing/erasing strokes and geometric shapes
 // Tracks states such as brush size, color, fill mode, and shape mode
 public class DrawingTool extends MouseAdapter {
+	public enum ToolMode {
+		NONE,
+		DRAW,
+		ERASE,
+		FILL,
+		SHAPE
+	}
+
 	public enum ShapeType {
 		LINE,
 		RECTANGLE,
@@ -16,9 +25,7 @@ public class DrawingTool extends MouseAdapter {
 	private int[] strokeX = new int[100];
 	private int[] strokeY = new int[100];
 	private int pointCount = 0;
-	private boolean drawingEnabled = false;
-	private boolean eraseEnabled = false;
-	private boolean fillEnabled = false;
+	private ToolMode toolMode = ToolMode.NONE;
 	private ShapeType shapeType;
 	private boolean shapeInProgress;
 	private int shapeStartX;
@@ -32,8 +39,8 @@ public class DrawingTool extends MouseAdapter {
 	private BufferedImage eraseBefore;
 	private List<BufferedImage> eraseFillBefore;
 
-	public boolean isEraseEnabled() {
-		return eraseEnabled;
+	public ToolMode getToolMode() {
+		return toolMode;
 	}
 
 	public DrawingTool(DrawingCanvas canvas, CommandHistory commandHistory) {
@@ -59,47 +66,31 @@ public class DrawingTool extends MouseAdapter {
 		}
 	}
 
-	public void setDrawingEnabled(boolean drawingEnabled) {
-		this.drawingEnabled = drawingEnabled;
-		if (drawingEnabled) {
+	public void setToolMode(ToolMode toolMode) {
+		Objects.requireNonNull(toolMode, "toolMode");
+		if (toolMode == ToolMode.SHAPE && shapeType == null) {
+			throw new IllegalStateException("Select a shape before enabling shape mode");
+		}
+
+		activateToolMode(toolMode);
+	}
+
+	private void activateToolMode(ToolMode toolMode) {
+		this.toolMode = toolMode;
+		if (toolMode != ToolMode.SHAPE) {
 			shapeType = null;
 		}
-		if (!drawingEnabled) {
-			pointCount = 0;
-			canvas.setPreviewStroke(null);
-		}
-	}
-
-	public void setEraseEnabled(boolean eraseEnabled) {
-		this.eraseEnabled = eraseEnabled;
-		if (eraseEnabled) {
-			shapeType = null;
-		}
-		if (!eraseEnabled) {
-			pointCount = 0;
-			canvas.setPreviewStroke(null);
-		}
-	}
-
-	public void setFillEnabled(boolean fillEnabled) {
-		this.fillEnabled = fillEnabled;
-
-		if (fillEnabled) {
-			drawingEnabled = false;
-			eraseEnabled = false;
-			pointCount = 0;
-			canvas.setPreviewStroke(null);
-		}
-	}
-		
-	public void setShapeType(ShapeType shapeType) {
-		this.shapeType = shapeType;
-		this.shapeInProgress = false;
-		this.drawingEnabled = false;
-		this.eraseEnabled = false;
-		this.fillEnabled = false;
+		shapeInProgress = false;
 		pointCount = 0;
 		canvas.setPreviewStroke(null);
+	}
+		
+	public void selectShape(ShapeType shapeType) {
+		if (shapeType == null) {
+			throw new IllegalArgumentException("Shape type cannot be null");
+		}
+		this.shapeType = shapeType;
+		activateToolMode(ToolMode.SHAPE);
 	}
 
 	public void changeSize(int size) {
@@ -110,27 +101,27 @@ public class DrawingTool extends MouseAdapter {
 		return brushSize;
 	}
 
-	public void SetColour(Color colour) {
+	public void setColour(Color colour) {
 		this.currentColour = colour;
 	}
 
-	public Color GetColour() {
+	public Color getColour() {
 		return this.currentColour;
 	}
 
 // Updates the preview or erases in the path of the cursor
 @Override
 public void mouseDragged(MouseEvent e) {
-    if (shapeType != null && shapeInProgress) {
+    if (toolMode == ToolMode.SHAPE && shapeInProgress) {
         updateShapePreview(e.getX(), e.getY());
         return;
     }
 
-    if (eraseEnabled && pointCount > 0) {
+    if (toolMode == ToolMode.ERASE && pointCount > 0) {
         int last = pointCount - 1;
         canvas.eraseLine(strokeX[last], strokeY[last], e.getX(), e.getY(), brushSize);
         addPoint(e);
-    } else if (drawingEnabled && pointCount > 0) {
+    } else if (toolMode == ToolMode.DRAW && pointCount > 0) {
         addPoint(e);
         updatePreview();
     }
@@ -139,12 +130,12 @@ public void mouseDragged(MouseEvent e) {
 // Starts an action, fills the canvas, or begins a shape, drawing or erasing
 @Override
 public void mousePressed(MouseEvent e) {
-    if (fillEnabled) {
+    if (toolMode == ToolMode.FILL) {
         commandHistory.execute(new FillCommand(canvas, e.getX(), e.getY(), currentColour));
         return;
     }
 
-    if (shapeType != null) {
+    if (toolMode == ToolMode.SHAPE && shapeType != null) {
         shapeStartX = e.getX();
         shapeStartY = e.getY();
         shapeInProgress = true;
@@ -154,13 +145,13 @@ public void mousePressed(MouseEvent e) {
         return;
     }
 
-    if (!drawingEnabled && !eraseEnabled) {
+    if (toolMode != ToolMode.DRAW && toolMode != ToolMode.ERASE) {
         return;
     }
 
     pointCount = 0;
 
-    if (eraseEnabled) {
+    if (toolMode == ToolMode.ERASE) {
         eraseBefore = canvas.copyStrokeLayer();
         eraseFillBefore = canvas.copyFillLayers();
         addPoint(e);
@@ -177,7 +168,7 @@ public void mousePressed(MouseEvent e) {
 // Finishes an shape, drawing or erasing and adds it into the command history
 @Override
 public void mouseReleased(MouseEvent e) {
-    if (shapeType != null) {
+    if (toolMode == ToolMode.SHAPE && shapeType != null) {
         if (!shapeInProgress) {
             return;
         }
@@ -189,7 +180,7 @@ public void mouseReleased(MouseEvent e) {
         return;
     }
 
-    if (eraseEnabled) {
+    if (toolMode == ToolMode.ERASE) {
         if (pointCount > 0) {
             int last = pointCount - 1;
             if (strokeX[last] != e.getX() || strokeY[last] != e.getY()) {
@@ -208,7 +199,7 @@ public void mouseReleased(MouseEvent e) {
         return;
     }
 
-    if (!drawingEnabled || pointCount == 0) {
+    if (toolMode != ToolMode.DRAW || pointCount == 0) {
         return;
     }
 

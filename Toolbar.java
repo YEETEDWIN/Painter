@@ -26,13 +26,13 @@ public class Toolbar extends JComponent {
 
 		JButton colourButton = new JButton("Colour");
 		colourButton.setBounds(187, 10, 80, 30);
-		colourButton.setForeground(drawTool.GetColour());
+		colourButton.setForeground(drawTool.getColour());
 		colourButton.addActionListener(event -> {
-			Color chosenColour = JColorChooser.showDialog(this, "Choose a colour", drawTool.GetColour());
+			Color chosenColour = JColorChooser.showDialog(this, "Choose a colour", drawTool.getColour());
 			if (chosenColour != null) {
 				colourButton.setForeground(chosenColour);
-				if (!drawTool.isEraseEnabled()) {
-					drawTool.SetColour(chosenColour);
+				if (drawTool.getToolMode() != DrawingTool.ToolMode.ERASE) {
+					drawTool.setColour(chosenColour);
 				}
 			}
 		});
@@ -55,19 +55,21 @@ public class Toolbar extends JComponent {
 		fillButton.setBounds(454, 10, 80, 30);
 		Color fillTextColor = fillButton.getForeground();
 
-		JPopupMenu shapeMenu = new JPopupMenu();
-		JMenuItem lineItem = new JMenuItem("Line");
-		lineItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.LINE));
-		shapeMenu.add(lineItem);
-		JMenuItem rectangleItem = new JMenuItem("Rectangle");
-		rectangleItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.RECTANGLE));
-		shapeMenu.add(rectangleItem);
-		JMenuItem ellipseItem = new JMenuItem("Ellipse");
-		ellipseItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.ELLIPSE));
-		shapeMenu.add(ellipseItem);
-
 		JButton shapeButton = new JButton("Shape");
 		shapeButton.setBounds(543, 10, 80, 30);
+		Color shapeTextColor = shapeButton.getForeground();
+
+		JPopupMenu shapeMenu = new JPopupMenu();
+		JMenuItem lineItem = new JMenuItem("Line");
+		lineItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, shapeButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.LINE));
+		shapeMenu.add(lineItem);
+		JMenuItem rectangleItem = new JMenuItem("Rectangle");
+		rectangleItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, shapeButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.RECTANGLE));
+		shapeMenu.add(rectangleItem);
+		JMenuItem ellipseItem = new JMenuItem("Ellipse");
+		ellipseItem.addActionListener(event -> selectShape(drawTool, colourButton, drawButton, eraseButton, fillButton, shapeButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.ELLIPSE));
+		shapeMenu.add(ellipseItem);
+
 		shapeButton.addActionListener(event -> shapeMenu.show(shapeButton, 0, shapeButton.getHeight()));
 		add(shapeButton);
 
@@ -94,16 +96,16 @@ public class Toolbar extends JComponent {
 			if (enabled) {
 				drawButton.setSelected(false);
 				fillButton.setSelected(false);
+				shapeButton.setSelected(false);
 				drawButton.setForeground(drawTextColor);
 				fillButton.setForeground(fillTextColor);
-				drawTool.setDrawingEnabled(false);
-				drawTool.setFillEnabled(false);
+				shapeButton.setForeground(shapeTextColor);
 			}
-			drawTool.setEraseEnabled(enabled);
+			drawTool.setToolMode(enabled ? DrawingTool.ToolMode.ERASE : DrawingTool.ToolMode.NONE);
 			if (enabled) {
-				drawTool.SetColour(Color.WHITE);
+				drawTool.setColour(Color.WHITE);
 			} else {
-				drawTool.SetColour(colourButton.getForeground());
+				drawTool.setColour(colourButton.getForeground());
 			}
 		});
 		add(eraseButton);
@@ -114,13 +116,13 @@ public class Toolbar extends JComponent {
 			if (enabled) {
 				eraseButton.setSelected(false);
 				fillButton.setSelected(false);
+				shapeButton.setSelected(false);
 				eraseButton.setForeground(eraseTextColor);
 				fillButton.setForeground(fillTextColor);
-				drawTool.setEraseEnabled(false);
-				drawTool.setFillEnabled(false);
+				shapeButton.setForeground(shapeTextColor);
 			}
-			drawTool.setDrawingEnabled(enabled);
-			drawTool.SetColour(colourButton.getForeground());
+			drawTool.setToolMode(enabled ? DrawingTool.ToolMode.DRAW : DrawingTool.ToolMode.NONE);
+			drawTool.setColour(colourButton.getForeground());
 		});
 		add(drawButton);
 
@@ -130,27 +132,27 @@ public class Toolbar extends JComponent {
 			if (enabled) {
 				eraseButton.setSelected(false);
 				drawButton.setSelected(false);
+				shapeButton.setSelected(false);
 				eraseButton.setForeground(eraseTextColor);
 				drawButton.setForeground(drawTextColor);
-				drawTool.setDrawingEnabled(false);
-				drawTool.setEraseEnabled(false);
+				shapeButton.setForeground(shapeTextColor);
 			}
-			drawTool.setFillEnabled(enabled);
-			drawTool.SetColour(colourButton.getForeground());
+			drawTool.setToolMode(enabled ? DrawingTool.ToolMode.FILL : DrawingTool.ToolMode.NONE);
+			drawTool.setColour(colourButton.getForeground());
 		});
 		add(fillButton);
 	}
 
-	private void selectShape(DrawingTool drawTool, JButton colourButton, JToggleButton drawButton, JToggleButton eraseButton, JToggleButton fillButton, Color drawTextColour, Color eraseTextColour, Color fillTextColour, DrawingTool.ShapeType shapeType) {
+	private void selectShape(DrawingTool drawTool, JButton colourButton, JToggleButton drawButton, JToggleButton eraseButton, JToggleButton fillButton, JButton shapeButton, Color drawTextColour, Color eraseTextColour, Color fillTextColour, DrawingTool.ShapeType shapeType) {
 		drawButton.setSelected(false);
 		drawButton.setForeground(drawTextColour);
 		eraseButton.setSelected(false);
 		eraseButton.setForeground(eraseTextColour);
 		fillButton.setSelected(false);
 		fillButton.setForeground(fillTextColour);
-		drawTool.setEraseEnabled(false);
-		drawTool.SetColour(colourButton.getForeground());
-		drawTool.setShapeType(shapeType);
+		shapeButton.setForeground(ACTIVE_BUTTON_TEXT_COLOR);
+		drawTool.setColour(colourButton.getForeground());
+		drawTool.selectShape(shapeType);
 	}
 
 	public int getToolbarWidth() {
