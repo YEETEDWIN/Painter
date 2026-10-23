@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
-import javax.swing.JPanel;
-import java.util.List;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JPanel;
 
 public class DrawingCanvas extends JPanel {
     private final List<Stroke> strokes = new ArrayList<>();
@@ -38,6 +38,26 @@ public class DrawingCanvas extends JPanel {
 
     public void removeFillLayer(BufferedImage fillLayer) {
         fillLayers.remove(fillLayer);
+        repaint();
+    }
+
+    boolean isStrokeAt(int x, int y) {
+        return strokeLayer != null && x >= 0 && x < strokeLayer.getWidth() && y >= 0 && y < strokeLayer.getHeight() && ((strokeLayer.getRGB(x, y) >>> 24) & 0xff) > 0;
+    }
+
+    public void applyFillToStrokeLayer(BufferedImage fillLayer) {
+        ensureStrokeLayer();
+
+        if (fillLayer.getWidth() != strokeLayer.getWidth() || fillLayer.getHeight() != strokeLayer.getHeight()) {
+            return;
+        }
+
+        Graphics2D g = strokeLayer.createGraphics();
+        try {
+            g.drawImage(fillLayer, 0, 0, null);
+        } finally {
+            g.dispose();
+        }
         repaint();
     }
 

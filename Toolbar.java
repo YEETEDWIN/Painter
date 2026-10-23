@@ -67,18 +67,18 @@ public class Toolbar extends JComponent {
 		drawButton.setBounds(10, 10, 80, 30);
 		Color drawTextColor = drawButton.getForeground();
 		JToggleButton fillButton = new JToggleButton("Fill", false);
-		fillButton.setBounds(730, 10, 80, 30);
+		fillButton.setBounds(820, 10, 80, 30);
 		Color fillTextColor = fillButton.getForeground();
 
 		JPopupMenu shapeMenu = new JPopupMenu();
 		JMenuItem lineItem = new JMenuItem("Line");
-		lineItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, drawTextColor, eraseTextColor, DrawingTool.ShapeType.LINE));
+		lineItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.LINE));
 		shapeMenu.add(lineItem);
 		JMenuItem rectangleItem = new JMenuItem("Rectangle");
-		rectangleItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, drawTextColor, eraseTextColor, DrawingTool.ShapeType.RECTANGLE));
+		rectangleItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.RECTANGLE));
 		shapeMenu.add(rectangleItem);
 		JMenuItem ellipseItem = new JMenuItem("Ellipse");
-		ellipseItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, drawTextColor, eraseTextColor, DrawingTool.ShapeType.ELLIPSE));
+		ellipseItem.addActionListener(event -> selectShape(drawTool, colorButton, drawButton, eraseButton, fillButton, drawTextColor, eraseTextColor, fillTextColor, DrawingTool.ShapeType.ELLIPSE));
 		shapeMenu.add(ellipseItem);
 
 		JButton shapeButton = new JButton("Shape");
@@ -139,11 +139,13 @@ public class Toolbar extends JComponent {
 		add(fillButton);
 	}
 
-	private void selectShape(DrawingTool drawTool, JButton colorButton, JToggleButton drawButton, JToggleButton eraseButton, Color drawTextColor, Color eraseTextColor, DrawingTool.ShapeType shapeType) {
+	private void selectShape(DrawingTool drawTool, JButton colorButton, JToggleButton drawButton, JToggleButton eraseButton, JToggleButton fillButton, Color drawTextColor, Color eraseTextColor, Color fillTextColor, DrawingTool.ShapeType shapeType) {
 		drawButton.setSelected(false);
 		drawButton.setForeground(drawTextColor);
 		eraseButton.setSelected(false);
 		eraseButton.setForeground(eraseTextColor);
+		fillButton.setSelected(false);
+		fillButton.setForeground(fillTextColor);
 		drawTool.setEraseEnabled(false);
 		drawTool.SetColour(colorButton.getForeground());
 		drawTool.setShapeType(shapeType);

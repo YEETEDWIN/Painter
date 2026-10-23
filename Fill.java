@@ -1,6 +1,6 @@
-import java.awt.image.BufferedImage;
-import java.awt.Point;
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -10,8 +10,7 @@ public final class Fill {
     private Fill() {
     }
 
-    public static BufferedImage createFillLayer(
-            BufferedImage source, int startX, int startY, Color fillColor) {
+    public static BufferedImage createFillLayer(BufferedImage source, int startX, int startY, Color fillColor) {
 
         int width = source.getWidth();
         int height = source.getHeight();
@@ -58,32 +57,7 @@ public final class Fill {
             pixels.add(new Point(x - 1, y - 1));
         }
 
-        BufferedImage expandedFill = new BufferedImage(
-            width, height, BufferedImage.TYPE_INT_ARGB);
-        
-        for (int y = 0; y < height; y++){
-            for (int x = 0; x < width; x++){
-                boolean covered = fillLayer.getRGB(x, y) != 0;
-
-                for (int dy = -1; dy <= 1 && !covered; dy++){
-                    for (int dx = -1; dx <= 1 && !covered; dx++){
-                        int neighborX = x + dx;
-                        int neighborY = y + dy;
-                        
-                        if (neighborX >= 0 && neighborX < width
-                            && neighborY >=0 && neighborY < height
-                            && fillLayer.getRGB(neighborX, neighborY) != 0) {
-                                covered = true;
-                            }
-                    }
-                }
-
-                if (covered) {
-                    expandedFill.setRGB(x, y, replacementColor);
-                }
-            }
-        }
-        return expandedFill;
+        return fillLayer;
     }
 
     private static boolean colorsMatch(int color, int targetcolor) {

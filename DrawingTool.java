@@ -88,11 +88,14 @@ public class DrawingTool extends MouseAdapter {
 			pointCount = 0;
 			canvas.setPreviewStroke(null);
 		}
+	}
+		
 	public void setShapeType(ShapeType shapeType) {
 		this.shapeType = shapeType;
 		this.shapeInProgress = false;
 		this.drawingEnabled = false;
 		this.eraseEnabled = false;
+		this.fillEnabled = false;
 		pointCount = 0;
 		canvas.setPreviewStroke(null);
 	}

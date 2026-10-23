@@ -7,6 +7,9 @@ public class FillCommand implements Command {
     private final int y;
     private final Color color;
     private BufferedImage fillLayer;
+    private BufferedImage strokeLayerBefore;
+    private BufferedImage strokeLayerAfter;
+    private boolean recolorsStroke;
 
     public FillCommand(DrawingCanvas canvas, int x, int y,Color color) {
         this.canvas = canvas;
@@ -19,17 +22,30 @@ public class FillCommand implements Command {
     public void execute() {
         if (fillLayer == null) {
             BufferedImage snapshot = canvas.createSnapshot();
+            recolorsStroke = canvas.isStrokeAt(x, y);
             fillLayer = Fill.createFillLayer(snapshot, x, y, color);
+
+            if (recolorsStroke) {
+                strokeLayerBefore = canvas.copyStrokeLayer();
+                canvas.applyFillToStrokeLayer(fillLayer);
+                strokeLayerAfter = canvas.copyStrokeLayer();
+                return;
+            }
         }
 
-        canvas.addFillLayer(fillLayer);
+        if (recolorsStroke) {
+            canvas.restoreStrokeLayer(strokeLayerAfter);
+        } else {
+            canvas.addFillLayer(fillLayer);
+        }
     }
 
-    @Override 
+    @Override
     public void undo() {
-        if (fillLayer != null) {
+        if (recolorsStroke) {
+            canvas.restoreStrokeLayer(strokeLayerBefore);
+        } else if (fillLayer != null) {
             canvas.removeFillLayer(fillLayer);
         }
     }
-
 }
