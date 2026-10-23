@@ -4,6 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+// Handles mouse input for drawing/erasing strokes and geometric shapes
+// Tracks states such as brush size, color, fill mode, and shape mode
 public class DrawingTool extends MouseAdapter {
 	public enum ShapeType {
 		LINE,
@@ -116,6 +118,7 @@ public class DrawingTool extends MouseAdapter {
 		return this.currentColour;
 	}
 
+// Updates the preview or erases in the path of the cursor
 @Override
 public void mouseDragged(MouseEvent e) {
     if (shapeType != null && shapeInProgress) {
@@ -131,8 +134,9 @@ public void mouseDragged(MouseEvent e) {
         addPoint(e);
         updatePreview();
     }
-} //updates the preview or erases in the path of the cursor
+} 
 
+// Starts an action, fills the canvas, or begins a shape, drawing or erasing
 @Override
 public void mousePressed(MouseEvent e) {
     if (fillEnabled) {
@@ -168,8 +172,9 @@ public void mousePressed(MouseEvent e) {
     strokeSize = brushSize;
     addPoint(e);
     updatePreview();
-}// starts an action, fills the canvas, or begins a shape, drawing or erasing
+}
 
+// Finishes an shape, drawing or erasing and adds it into the command history
 @Override
 public void mouseReleased(MouseEvent e) {
     if (shapeType != null) {
@@ -258,5 +263,5 @@ public void mouseReleased(MouseEvent e) {
 			default:
 				return null;
 		}
-	} // finishes an shape, drawing or erasing and adds it into the command history
+	}
 }
