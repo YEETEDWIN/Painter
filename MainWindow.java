@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 
 public class MainWindow {
 
-	private JFrame window;
+	private final JFrame window;
 	private Toolbar toolbar;
 	private JLayeredPane toolbarOverlay;
 
