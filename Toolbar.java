@@ -11,7 +11,6 @@ public class Toolbar extends JComponent {
 	private static final int TOOLBAR_HEIGHT = 50;
 	private static final Color ACTIVE_BUTTON_TEXT_COLOR = new Color(46, 125, 50);
 
-
 	public Toolbar(DrawingTool drawTool, CommandHistory commandHistory, DrawingCanvas canvas) {
 		setOpaque(false);
 
@@ -65,14 +64,20 @@ public class Toolbar extends JComponent {
 		JToggleButton drawButton = new JToggleButton("Draw", false);
 		drawButton.setBounds(10, 10, 80, 30);
 		Color drawTextColor = drawButton.getForeground();
+		JToggleButton fillButton = new JToggleButton("Fill", false);
+		fillButton.setBounds(730, 10, 80, 30);
+		Color fillTextColor = fillButton.getForeground();
 
 		eraseButton.addActionListener(event -> {
 			boolean enabled = eraseButton.isSelected();
 			eraseButton.setForeground(enabled ? ACTIVE_BUTTON_TEXT_COLOR : eraseTextColor);
 			if (enabled) {
 				drawButton.setSelected(false);
+				fillButton.setSelected(false);
 				drawButton.setForeground(drawTextColor);
+				fillButton.setForeground(fillTextColor);
 				drawTool.setDrawingEnabled(false);
+				drawTool.setFillEnabled(false);
 			}
 			drawTool.setEraseEnabled(enabled);
 			if (enabled) {
@@ -88,13 +93,32 @@ public class Toolbar extends JComponent {
 			drawButton.setForeground(enabled ? ACTIVE_BUTTON_TEXT_COLOR : drawTextColor);
 			if (enabled) {
 				eraseButton.setSelected(false);
+				fillButton.setSelected(false);
 				eraseButton.setForeground(eraseTextColor);
+				fillButton.setForeground(fillTextColor);
 				drawTool.setEraseEnabled(false);
+				drawTool.setFillEnabled(false);
 			}
 			drawTool.setDrawingEnabled(enabled);
 			drawTool.SetColour(colorButton.getForeground());
 		});
 		add(drawButton);
+
+		fillButton.addActionListener(event -> {
+			boolean enabled = fillButton.isSelected();
+			fillButton.setForeground(enabled ? ACTIVE_BUTTON_TEXT_COLOR : fillTextColor);
+			if (enabled) {
+				eraseButton.setSelected(false);
+				drawButton.setSelected(false);
+				eraseButton.setForeground(eraseTextColor);
+				drawButton.setForeground(drawTextColor);
+				drawTool.setDrawingEnabled(false);
+				drawTool.setEraseEnabled(false);
+			}
+			drawTool.setFillEnabled(enabled);
+			drawTool.SetColour(colorButton.getForeground());
+		});
+		add(fillButton);
 	}
 
 	public int getToolbarWidth() {
