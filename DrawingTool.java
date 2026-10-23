@@ -101,7 +101,7 @@ public class DrawingTool extends MouseAdapter {
 	}
 
 	public void ChangeSize(int Size) {
-		this.newSize = Size;
+		this.newSize = Math.max(2, Size + 1);
 	}
 
 	public void SetColour(Color colour) {

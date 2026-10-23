@@ -123,12 +123,6 @@ public class DrawingCanvas extends JPanel {
         repaint();
     }
 
-    void restoreStrokes(List<Stroke> strokesToRestore) {
-        strokes.clear();
-        strokes.addAll(strokesToRestore);
-        repaint();
-    }
-
     private void rebuildStrokeLayer() {
         int width = getWidth();
         int height = getHeight();
